@@ -1,0 +1,33 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP ESP32-PICO-V3
+D RF System on a Chip - SoC Module WiFi LGA Dual Core BT Combo
+F https://kr.mouser.com/datasheet/2/891/esp32-pico-v3_datasheet_en-1842685.pdf
+$ENDCMP
+#
+$CMP LMR36506
+F https://www.ti.com/lit/ds/symlink/lmr36506.pdf
+$ENDCMP
+#
+$CMP MA702GQ-P
+D Board Mount Hall Effect / Magnetic Sensors 12-bit, digital, contactless angle sensor with ABZ incremental & PWM outputs
+F https://www.monolithicpower.com/pub/media/document/m/a/ma702_r1.0.pdf
+$ENDCMP
+#
+$CMP SN65HVD230QDRG4
+D 3.3-V CAN Transceiver with Standby Mode
+F http://www.ti.com/lit/gpn/sn65hvd230q
+$ENDCMP
+#
+$CMP SW_Push_Dual_XKB_Connectivity_TS-1177-B-B-B
+D Push button switch, generic, symbol, four pins
+K switch normally-open pushbutton push-button
+F ~
+$ENDCMP
+#
+$CMP XT30PB
+D Mini XT30 Connector
+F https://www.tme.eu/Document/4acc913878197f8c2e30d4b8cdc47230/XT30UPB%20SPEC.pdf
+$ENDCMP
+#
+#End Doc Library
