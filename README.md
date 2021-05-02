@@ -1,8 +1,9 @@
 # Stealth Controller
-A Field Oriented Control Brushless DC Motor Controller
+A Field Oriented Control Brushless DC Motor Controller.
+
 With 8A driver, Magnetic Sensor, Microcontroller, Two-Wire Automotive Interface
 
-[Board]: https://github.com/jkirsons/stealth-controller/blob/main/Resources/Driver%200.2.png
+[Board]: https://raw.githubusercontent.com/jkirsons/stealth-controller/main/Resources/Driver%200.2.png
 
 ---
 BOM
