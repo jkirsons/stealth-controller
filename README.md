@@ -2,13 +2,13 @@
 A Field Oriented Control Brushless DC Motor Controller
 With 8A driver, Magnetic Sensor, Microcontroller, Two-Wire Automotive Interface
 
-
+[Board]: https://github.com/jkirsons/stealth-controller/blob/main/Resources/Driver%200.2.png
 
 ---
 BOM
 
-Ref|Qnty | Value | Size
---- | --- | ---
+Ref | Qnty | Value | Size
+--- | --- | --- | --- 
 C3, C21, C22, C23, C24, C25, C26, |7|22uF 25v|0805
 C1, C15, C16, |3|22uF 10v|0603
 C9, C18, C20, |3|10uF 10v|0603
