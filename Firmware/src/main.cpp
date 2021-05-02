@@ -126,6 +126,9 @@ void setup() {
 	while (!Serial);
 	delay(1);
 	Serial.println("Initializing...");
+	command.add('M', doCommander, "motor");  
+	command.verbose = VerboseMode::user_friendly;
+	//command.decimal_places = 4;
 	motor.useMonitoring(Serial);
 
 	//setup VRef / ILim
@@ -162,12 +165,12 @@ void setup() {
 	motor.linkDriver(&driver);
 	motor.controller = MotionControlType::angle;
 	motor.foc_modulation = FOCModulationType::SinePWM;
-	motor.motion_downsample = 5;
-	motor.voltage_limit = 1;
-	motor.voltage_sensor_align = 1;	
-	motor.velocity_limit = 30;
-  	motor.LPF_velocity.Tf = 0.005;	
-	motor.PID_velocity.output_ramp = 500;
+	motor.motion_downsample = 10;
+	motor.voltage_limit = 1.0;
+	motor.voltage_sensor_align = 1.2;	
+	motor.velocity_limit = 50;
+  motor.LPF_velocity.Tf = 0.0005;	
+	motor.PID_velocity.output_ramp = 300;
 	
 	// velocity PI controller parameters
 	motor.PID_velocity.P = 0.0;
@@ -186,10 +189,8 @@ void setup() {
 
 	Serial.println("Motor Init complete...");
 
-	command.add('M', doCommander, "Commander Command");  
-  	command.verbose = VerboseMode::user_friendly;
-  	command.decimal_places = 4;
-	
+  motor.monitor_downsample = 0; // disable monitor at first - optional
+
 	pidDelay = millis() + 10;
 }
 
@@ -197,14 +198,15 @@ void setup() {
 void loop() {
 	motor.loopFOC();
 	motor.move();
-	//motor.monitor();
+	motor.monitor();
+	
 	// user communication
-  	command.run();
+	command.run();
 
   // Smooth start the PIDs
   if(!pids_set && (millis() > pidDelay)) {
     motor.PID_velocity.P = 0.1;
-    motor.PID_velocity.I = 10.0;
+    motor.PID_velocity.I = 2.0;
     motor.PID_velocity.D = 0.0;
     pids_set = true;
   }	
