@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <SimpleFOC.h>
 #include "drivers/drv8316/drv8316.h"
-#include "can.h"
+#include "can/can.h"
 
 // DRV8316
 #define DRV_MISO   21
@@ -154,7 +154,7 @@ void setup() {
 	Serial.println("Driver Init...");
 	driver.init(hspi);
 	delayMicroseconds(1);
-	driver.setBuckVoltage(DRV8316_BuckVoltage::VB_4V);
+	driver.setBuckVoltage(DRV8316_BuckVoltage::VB_5V);
 	delayMicroseconds(1);
 	//driver.setPWMMode(DRV8316_PWMMode::PWM6_CurrentLimit_Mode);
 	Serial.println("Buck Voltage Set...");

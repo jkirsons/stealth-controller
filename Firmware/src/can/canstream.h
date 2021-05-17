@@ -1,4 +1,4 @@
-#ifndef CANDSTREAM_H
+#ifndef CANSTREAM_H
 #define CANSTREAM_H
 
 #include "Stream.h"
@@ -30,7 +30,7 @@ public:
     size_t write(uint8_t);
     size_t write(const uint8_t *buffer, size_t size);
 
-    enum dt { double_val, int_val, char_val } dataType;
+    enum dt { double_val, int_val, char_val, none } dataType = dt::none;
     double double_value;
     int int_value;
     char char_value;
