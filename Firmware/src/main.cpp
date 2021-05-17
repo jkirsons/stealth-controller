@@ -1,8 +1,8 @@
 #include "Arduino.h"
 #include <Wire.h>
 #include <SimpleFOC.h>
-#include <Math.h>
 #include "drivers/drv8316/drv8316.h"
+#include "can.h"
 
 // DRV8316
 #define DRV_MISO   21
@@ -23,10 +23,12 @@ SPIClass * vspi = NULL;
 // HSPI - for Encoder
 SPIClass * hspi = NULL;
 
+CANDriver can;
+
 // magnetic sensor instance - SPI
 MagneticSensorSPIConfig_s MA702_SPI = {
   .spi_mode = SPI_MODE0,
-  .clock_speed = 1000000,
+  .clock_speed = 25000000,
   .bit_resolution = 14,
   .angle_register = 0x0000,
   .data_start_bit = 15, 
@@ -40,7 +42,7 @@ BLDCMotor motor = BLDCMotor(11);
 DRV8316Driver6PWM driver = DRV8316Driver6PWM(12,14,27,26,33,32,5,false/*,8,39*/);
 //DRV8316Driver3PWM driver = DRV8316Driver3PWM(2,1,0,11,false);
 
-Commander command = Commander(Serial);
+Commander command = Commander(can.stream);
 void doCommander(char* cmd) { command.motor(&motor, cmd); }
 
 unsigned long pidDelay = 0;
@@ -121,7 +123,9 @@ void printDRV8316Status() {
 }
 
 
-void setup() {
+void setup() {	
+	can.init(7, 34, command);
+
 	Serial.begin(115200);
 	while (!Serial);
 	delay(1);
@@ -165,11 +169,11 @@ void setup() {
 	motor.linkDriver(&driver);
 	motor.controller = MotionControlType::angle;
 	motor.foc_modulation = FOCModulationType::SinePWM;
-	motor.motion_downsample = 10;
+	//motor.motion_downsample = 10;
 	motor.voltage_limit = 1.0;
 	motor.voltage_sensor_align = 1.2;	
 	motor.velocity_limit = 50;
-  motor.LPF_velocity.Tf = 0.0005;	
+	motor.LPF_velocity.Tf = 0.0005;	
 	motor.PID_velocity.output_ramp = 300;
 	
 	// velocity PI controller parameters
@@ -189,19 +193,35 @@ void setup() {
 
 	Serial.println("Motor Init complete...");
 
-  motor.monitor_downsample = 0; // disable monitor at first - optional
+	motor.monitor_downsample = 0; // disable monitor at first - optional
 
 	pidDelay = millis() + 10;
 }
 
+int count = 0;
+unsigned long lastTime = 0;
 
 void loop() {
 	motor.loopFOC();
 	motor.move();
 	motor.monitor();
+
+	can.receive();
 	
 	// user communication
 	command.run();
+
+	count++;
+	if(count > 100000)
+	{
+		unsigned long timeDiff = millis() - lastTime;
+		if(timeDiff > 0) {
+			float fps = 100000.0f / ((float)timeDiff / 1000.0f);
+			printf("Main Loop Rate: %.6f\n", fps);
+		}
+		lastTime = millis();
+		count = 0;
+	}
 
   // Smooth start the PIDs
   if(!pids_set && (millis() > pidDelay)) {
@@ -211,4 +231,3 @@ void loop() {
     pids_set = true;
   }	
 }
-
