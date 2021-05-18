@@ -10,20 +10,18 @@
  * sudo ip link set can0 up type can help
  */
 
-uint32_t bitMask[] = { 0b1111,    //BusID
-                        0b1,      //Operation
-                        0b111,    //DataType
-                        0b1111,   //Global
-                        0b1111,   //Command
-                        0b1111 }; //SubCommand;
+uint32_t bitMask[] = {  0b1111,         //DataType
+                        0b11111111,     //Command
+                        0b1111,         //MotorID
+                        0b111111111111  //BusID
+                    };
 
-int shr[] = { 16, 15, 12, 8, 4, 0 }; // shift right by bits  
+int shr[] = { 24, 16, 12, 0 }; // shift right by bits
 
 // Map identifier bit segments to commander codes.  Structures are generated here:
-// https://docs.google.com/spreadsheets/d/10lNGwA5vVTEzVzacbnZFmxrxztgwlqkmvYGRFUPO5Kk/edit#gid=0
-std::map<int,char> globals { { 5, '?' }, { 6, '@' }, { 7, '#' }, { 0, 'A' }, { 1, 'B' }, { 2, 'C' }, { 3, 'D' }, { 4, 'E' }, { 10, 'M' }, { 11, 'N' }, { 12, 'O' }, { 13, 'P' }, { 14, 'Q' }, { 15, 'R' } };
-std::map<int,char> commands { { 1, 'E' }, { 2, 'L' }, { 3, 'C' }, { 4, 'T' }, { 5, 'S' }, { 6, 'M' }, { 7, 'R' }, { 8, 'D' }, { 9, 'Q' }, { 10, 'V' }, { 11, 'A' } };
-std::map<std::pair<int, int>, char> subCommands { { { 2, 1 }, 'C' }, { { 2, 2 }, 'U' }, { { 2, 3 }, 'V' }, { { 3, 1 }, 'D' }, { { 5, 1 }, 'M' }, { { 5, 2 }, 'E' }, { { 6, 1 }, 'D' }, { { 6, 2 }, 'C' }, { { 6, 3 }, 'G' }, { { 6, 4 }, 'S' }, { { 8, 1 }, 'P' }, { { 8, 2 }, 'I' }, { { 8, 3 }, 'D' }, { { 8, 4 }, 'R' }, { { 8, 5 }, 'L' }, { { 8, 6 }, 'F' }, { { 9, 1 }, 'P' }, { { 9, 2 }, 'I' }, { { 9, 3 }, 'D' }, { { 9, 4 }, 'R' }, { { 9, 5 }, 'L' }, { { 9, 6 }, 'F' }, { { 10, 1 }, 'P' }, { { 10, 2 }, 'I' }, { { 10, 3 }, 'D' }, { { 10, 4 }, 'R' }, { { 10, 5 }, 'L' }, { { 10, 6 }, 'F' }, { { 11, 1 }, 'P' }, { { 11, 2 }, 'I' }, { { 11, 3 }, 'D' }, { { 11, 4 }, 'R' }, { { 11, 5 }, 'L' }, { { 11, 6 }, 'F' } };
+// https://docs.google.com/spreadsheets/d/1VWHshxOOnxZyKf5IjVzg1VQMbh7cPu5BULljX7UZJ8g/edit#gid=0
+
+std::map<int,std::vector<char>> commands { { 0, { ' ' } }, { 1, { 'E' } }, { 2, { 'L', 'C' } }, { 3, { 'L', 'U' } }, { 4, { 'L', 'V' } }, { 5, { 'C' } }, { 6, { 'C', 'D' } }, { 7, { 'T' } }, { 8, { 'S' } }, { 9, { 'S', 'M' } }, { 10, { 'S', 'E' } }, { 11, { 'M' } }, { 12, { 'M', 'D' } }, { 13, { 'M', 'C' } }, { 14, { 'M', 'G' } }, { 15, { 'M', 'S' } }, { 16, { 'R' } }, { 17, { 'D', 'P' } }, { 18, { 'D', 'I' } }, { 19, { 'D', 'D' } }, { 20, { 'D', 'R' } }, { 21, { 'D', 'L' } }, { 22, { 'D', 'F' } }, { 23, { 'Q', 'P' } }, { 24, { 'Q', 'I' } }, { 25, { 'Q', 'D' } }, { 26, { 'Q', 'R' } }, { 27, { 'Q', 'L' } }, { 28, { 'Q', 'F' } }, { 29, { 'V', 'P' } }, { 30, { 'V', 'I' } }, { 31, { 'V', 'D' } }, { 32, { 'V', 'R' } }, { 33, { 'V', 'L' } }, { 34, { 'V', 'F' } }, { 35, { 'A', 'P' } }, { 36, { 'A', 'I' } }, { 37, { 'A', 'D' } }, { 38, { 'A', 'R' } }, { 39, { 'A', 'L' } }, { 40, { 'A', 'F' } }, { 41, { 'A', '>' } }, { 42, { 'S', '>' } }, { 43, { 'L', '>' } } };std::map<int,char> motors { { 0, ' ' }, { 1, 'M' }, { 2, 'N' }, { 3, 'O' }, { 4, 'P' }, { 5, 'Q' }, { 6, 'R' }, { 7, 'S' } };
 
 CANDriver::CANDriver() {
 }
@@ -106,49 +104,42 @@ void CANDriver::receive() {
         printf("--- Recieved CAN Frame with ID: %d ---\n", identifier);
         this->identifier = identifier;
         this->stream.dataType = CANStream::dt::none;
-        uint8_t busID = getBits(identifier, 0);
-        uint8_t operation = getBits(identifier, 1);
-        uint8_t dataType = getBits(identifier, 2);
-        uint8_t global = getBits(identifier, 3);
-        uint8_t command = getBits(identifier, 4);
-        uint8_t subCommand = getBits(identifier, 5);
-        /*
-        printf("BusID: %u\n", busID);
-        printf("Operation: %u\n", operation);
-        printf("Data Type: %u\n", dataType);
-        printf("Global: %u\n", global);
-        printf("Command: %u\n", command);
-        printf("SubCommand: %u\n", subCommand);
-        */
+        uint8_t dataType = getBits(identifier, 0);
+        uint8_t command = getBits(identifier, 1);
+        uint8_t motorID = getBits(identifier, 2);
+        uint8_t busID = getBits(identifier, 3);
         char textCommand[] = "\0\0\0";
+        int textCommandPosition = 0;
 
-        // Global command
-        if( globals.find(global) != globals.end() ) {
-            textCommand[0] = globals[global];
+        // Motor
+        if( motors.find(motorID) != motors.end() && motors[motorID] != ' ' )
+        {
+            textCommand[textCommandPosition] = motors[motorID];
+            textCommandPosition++;
         }
-
+        
         // Command
         if( commands.find(command) != commands.end() ) {
-            textCommand[1] = commands[command];
-        }
-
-        // SubCommand
-        if( subCommands.find(std::make_pair(command, subCommand)) != subCommands.end() )
-        {
-            textCommand[2] = subCommands[std::make_pair(command, subCommand)];
+            std::vector<char> com_txt = commands[command];
+            for(char c : com_txt) {
+                if(c != ' ') {
+                    textCommand[textCommandPosition] = c;
+                    textCommandPosition++;
+                }
+            }
         }
 
         switch(dataType) {
-            case 0: // Float - 4 bytes
+            case 1: // Float - 4 bytes
                 snprintf ( stream.value_buffer, 100, "%s%f%c", textCommand, bytesToFloat(data), this->command.eol );
                 break;
-            case 1: // Double - 8 bytes
+            case 2: // Double - 8 bytes
                 snprintf ( stream.value_buffer, 100, "%s%f%c", textCommand, bytesToDouble(data), this->command.eol );
                 break;
-            case 2: // Unsigned Char - 1 byte
+            case 3: // Unsigned Char - 1 byte
                 snprintf ( stream.value_buffer, 100, "%s%c%c", textCommand, data[0], this->command.eol );
                 break;
-            case 3: // Int - 4 bytes
+            case 4: // Int - 4 bytes
                 snprintf ( stream.value_buffer, 100, "%s%i%c", textCommand, bytesToInt(data), this->command.eol );
                 break;
         }
