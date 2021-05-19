@@ -56,8 +56,14 @@ double CANDriver::bytesToDouble(uint8_t * bytes) {
     return u.d;
 }
 
-unsigned char const * const CANDriver::floatToBytes(float *f) {
-    return 0; //(unsigned char const *)&f;
+uint8_t const * const CANDriver::floatToBytes(float *f) {
+    return (unsigned char const *)f;
+}
+uint8_t const * const CANDriver::doubleToBytes(double *d) {
+    return (unsigned char const *)d;
+}
+uint8_t const * const CANDriver::intToBytes(int32_t *i) {
+    return (unsigned char const *)i;
 }
 
 /*
@@ -67,30 +73,44 @@ uint8_t CANDriver::getBits(uint32_t value, uint8_t index) {
     return static_cast<uint8_t>((value >> shr[index] ) & bitMask[index]);
 }
 
-void CANDriver::init(int tx, int rx, Commander command) {
-    this->command = command;
-    this->command.verbose = VerboseMode::nothing;
+void CANDriver::init(int tx, int rx, Commander commander) {
+    this->command = commander;
+    this->command.verbose = VerboseMode::on_request;
 
     // hardware specific call
     _initCAN(tx, rx);
 }
 
 void CANDriver::transmit() {
-    if(this->stream.dataType != CANStream::dt::none) {
+    if(stream.dataType != stream.none) {
         uint32_t identifier = this->identifier;
+        printf("--- Transmitting CAN Frame with ID: %d ---\n", identifier);
         uint8_t data[] = "AABBCCDD";
-        switch(this->stream.dataType) {
+        switch(stream.dataType) {
             case CANStream::dt::double_val:
-            break;
+                printf("Double Value: %f\n", stream.double_value);
+                // Data Type: 2
+                identifier |= (2 << shr[0]);
+                memcpy(data, doubleToBytes(&stream.double_value), 8);
+                break;
             case CANStream::dt::char_val:
-            break;
+                printf("Char Value: %c\n", stream.char_value);
+                // Data Type: 3
+                identifier |= (3 << shr[0]);
+                data[0] = stream.char_value;
+                break;
             case CANStream::dt::int_val:
-            break;
+                printf("Int Value: %d\n", stream.int_value);
+                // Data Type: 4
+                identifier |= (4 << shr[0]);
+                memcpy(data, intToBytes(&stream.int_value), 4);
+                break;
             default: {}
         }
 
         // hardware specific call
         _transmitCAN(identifier, data, 8);
+        stream.dataType = stream.none;
     }
 }
 
@@ -103,12 +123,12 @@ void CANDriver::receive() {
     if (_receiveCAN(&identifier, data, &length) ) {
         printf("--- Recieved CAN Frame with ID: %d ---\n", identifier);
         this->identifier = identifier;
-        this->stream.dataType = CANStream::dt::none;
+        stream.dataType = stream.none;
         uint8_t dataType = getBits(identifier, 0);
         uint8_t command = getBits(identifier, 1);
         uint8_t motorID = getBits(identifier, 2);
         uint8_t busID = getBits(identifier, 3);
-        char textCommand[] = "\0\0\0";
+        char textCommand[] = "\0\0\0\0";
         int textCommandPosition = 0;
 
         // Motor
@@ -130,6 +150,9 @@ void CANDriver::receive() {
         }
 
         switch(dataType) {
+            case 0: // Get value
+                snprintf ( stream.value_buffer, 100, "%s%c", textCommand,this->command.eol );
+                break;
             case 1: // Float - 4 bytes
                 snprintf ( stream.value_buffer, 100, "%s%f%c", textCommand, bytesToFloat(data), this->command.eol );
                 break;

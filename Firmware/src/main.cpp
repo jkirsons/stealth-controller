@@ -3,6 +3,7 @@
 #include <SimpleFOC.h>
 #include "drivers/drv8316/drv8316.h"
 #include "can/can.h"
+#include "can/CommanderCAN.h"
 
 // DRV8316
 #define DRV_MISO   21
@@ -28,7 +29,7 @@ CANDriver can;
 // magnetic sensor instance - SPI
 MagneticSensorSPIConfig_s MA702_SPI = {
   .spi_mode = SPI_MODE0,
-  .clock_speed = 25000000,
+  .clock_speed = 20000000,
   .bit_resolution = 14,
   .angle_register = 0x0000,
   .data_start_bit = 15, 
@@ -42,7 +43,7 @@ BLDCMotor motor = BLDCMotor(11);
 DRV8316Driver6PWM driver = DRV8316Driver6PWM(12,14,27,26,33,32,5,false/*,8,39*/);
 //DRV8316Driver3PWM driver = DRV8316Driver3PWM(2,1,0,11,false);
 
-Commander command = Commander(can.stream);
+CommanderCAN command = CommanderCAN(can.stream);
 void doCommander(char* cmd) { command.motor(&motor, cmd); }
 
 unsigned long pidDelay = 0;
@@ -122,17 +123,14 @@ void printDRV8316Status() {
 	Serial.println("---");
 }
 
-
 void setup() {	
-	can.init(7, 34, command);
-
 	Serial.begin(115200);
 	while (!Serial);
 	delay(1);
 	Serial.println("Initializing...");
+
+	can.init(7, 34, command);
 	command.add('M', doCommander, "motor");  
-	command.verbose = VerboseMode::user_friendly;
-	//command.decimal_places = 4;
 	motor.useMonitoring(Serial);
 
 	//setup VRef / ILim
@@ -207,9 +205,8 @@ void loop() {
 	motor.monitor();
 
 	can.receive();
-	
-	// user communication
 	command.run();
+	can.transmit();
 
 	count++;
 	if(count > 100000)
