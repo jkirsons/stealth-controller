@@ -2,8 +2,8 @@
 #include <Wire.h>
 #include <SimpleFOC.h>
 #include "drivers/drv8316/drv8316.h"
-#include "can/can.h"
-#include "can/CommanderCAN.h"
+#include "can/CANDriver.h"
+#include "can/CANCommander.h"
 
 // DRV8316
 #define DRV_MISO   21
@@ -11,7 +11,9 @@
 #define DRV_SCLK   19
 #define DRV_SS     5
 
-#define VREF        DAC1
+#define DRV_VREF	DAC1
+#define DRV_OFF		8
+#define DRV_FAULT	39
 
 // MA702
 #define ENC_MISO   15
@@ -19,12 +21,13 @@
 #define ENC_SCLK   13
 #define ENC_SS     4
 
-// VSPI - for DRV8613
-SPIClass * vspi = NULL;
-// HSPI - for Encoder
-SPIClass * hspi = NULL;
+// CAN
+#define CAN_TX		7
+#define CAN_RX 		34
 
-CANDriver can;
+SPIClass * drv_spi = NULL;
+SPIClass * enc_spi = NULL;
+
 
 // magnetic sensor instance - SPI
 MagneticSensorSPIConfig_s MA702_SPI = {
@@ -41,9 +44,9 @@ MagneticSensorSPI sensor = MagneticSensorSPI(MA702_SPI, ENC_SS );
 
 BLDCMotor motor = BLDCMotor(11);
 DRV8316Driver6PWM driver = DRV8316Driver6PWM(12,14,27,26,33,32,5,false/*,8,39*/);
-//DRV8316Driver3PWM driver = DRV8316Driver3PWM(2,1,0,11,false);
 
-CommanderCAN command = CommanderCAN(can.stream);
+CANDriver can;
+CANCommander command = CANCommander(can.stream);
 void doCommander(char* cmd) { command.motor(&motor, cmd); }
 
 unsigned long pidDelay = 0;
@@ -129,37 +132,37 @@ void setup() {
 	delay(1);
 	Serial.println("Initializing...");
 
-	can.init(7, 34, command);
+	can.init(CAN_TX, CAN_RX, command);
 	command.add('M', doCommander, "motor");  
 	motor.useMonitoring(Serial);
 
 	//setup VRef / ILim
-	pinMode(VREF, OUTPUT);
-	dacWrite(VREF, (uint8_t)(1.66/2.98*255.0));
+	pinMode(DRV_VREF, OUTPUT);
+	dacWrite(DRV_VREF, (uint8_t)(1.66/2.98*255.0));
 
 	//setup driver off pin
-	pinMode(8, OUTPUT);
-	digitalWrite(8, 0);
+	pinMode(DRV_OFF, OUTPUT);
+	digitalWrite(DRV_OFF, 0);
 
 	//setup fault pin
-	pinMode(39, INPUT_PULLUP);
+	pinMode(DRV_FAULT, INPUT_PULLUP);
 
 	driver.pwm_frequency = 190000;
 	driver.voltage_power_supply = 12;
 
-	hspi = new SPIClass(HSPI);
-	hspi->begin(DRV_SCLK, DRV_MISO, DRV_MOSI, DRV_SS); //SCLK, MISO, MOSI, SS
+	enc_spi = new SPIClass(HSPI);
+	enc_spi->begin(DRV_SCLK, DRV_MISO, DRV_MOSI, DRV_SS);
 	Serial.println("Driver Init...");
-	driver.init(hspi);
+	driver.init(enc_spi);
 	delayMicroseconds(1);
 	driver.setBuckVoltage(DRV8316_BuckVoltage::VB_5V);
 	delayMicroseconds(1);
 	//driver.setPWMMode(DRV8316_PWMMode::PWM6_CurrentLimit_Mode);
 	Serial.println("Buck Voltage Set...");
 
-	vspi = new SPIClass(VSPI);
-	vspi->begin(ENC_SCLK, ENC_MISO, ENC_MOSI, ENC_SS); //SCLK, MISO, MOSI, SS
-	sensor.init(vspi);
+	drv_spi = new SPIClass(VSPI);
+	drv_spi->begin(ENC_SCLK, ENC_MISO, ENC_MOSI, ENC_SS);
+	sensor.init(drv_spi);
 
 	Serial.println("Driver Init complete...");
 
@@ -182,16 +185,13 @@ void setup() {
 	delay(100);
 	printDRV8316Status();
 
+	motor.monitor_downsample = 0; // disable monitor at first
 	motor.target = motor.shaftAngle();	
-	
 	motor.init();
 	motor.initFOC(); 
-
 	motor.target = motor.shaftAngle();	
 
 	Serial.println("Motor Init complete...");
-
-	motor.monitor_downsample = 0; // disable monitor at first - optional
 
 	pidDelay = millis() + 10;
 }

@@ -1,4 +1,4 @@
-#include "canstream.h"
+#include "CANStream.h"
 
 int CANStream::available(void) { 
     return (value_position < strlen(value_buffer)); 

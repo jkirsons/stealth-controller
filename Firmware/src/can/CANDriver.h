@@ -6,8 +6,7 @@
 #include <map>
 
 #include "communication/Commander.h"
-#include "canstream.h"
-
+#include "CANStream.h"
 #include "can_api.h"
 
 class CANDriver

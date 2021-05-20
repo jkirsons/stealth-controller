@@ -1,14 +1,14 @@
-#ifndef COMMANDERCAN_H
-#define COMMANDERCAN_H
+#ifndef CANCOMMANDER_H
+#define CANCOMMANDER_H
 
 #include "communication/Commander.h"
-#include "canstream.h"
+#include "CANStream.h"
 
-class CommanderCAN : public Commander
+class CANCommander : public Commander
 {
   public:
 
-    CommanderCAN(CANStream &can, char eol = '\n', bool echo = false);
+    CANCommander(CANStream &can, char eol = '\n', bool echo = false);
     CANStream* can_stream = nullptr;  
     
   private:
