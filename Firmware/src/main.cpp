@@ -133,7 +133,7 @@ void setup() {
 	Serial.println("Initializing...");
 
 	can.init(CAN_TX, CAN_RX, command);
-	command.add('M', doCommander, "motor");  
+	command.add('M', doCommander, (char*)"motor");
 	motor.useMonitoring(Serial);
 
 	//setup VRef / ILim
@@ -147,7 +147,7 @@ void setup() {
 	//setup fault pin
 	pinMode(DRV_FAULT, INPUT_PULLUP);
 
-	driver.pwm_frequency = 190000;
+	driver.pwm_frequency = 50000;
 	driver.voltage_power_supply = 12;
 
 	enc_spi = new SPIClass(HSPI);
@@ -174,8 +174,8 @@ void setup() {
 	motor.voltage_limit = 1.0;
 	motor.voltage_sensor_align = 1.2;	
 	motor.velocity_limit = 50;
-	motor.LPF_velocity.Tf = 0.0005;	
-	motor.PID_velocity.output_ramp = 300;
+	motor.LPF_velocity.Tf = 0.001;	
+	motor.PID_velocity.output_ramp = 500;
 	
 	// velocity PI controller parameters
 	motor.PID_velocity.P = 0.0;
@@ -222,8 +222,8 @@ void loop() {
 
   // Smooth start the PIDs
   if(!pids_set && (millis() > pidDelay)) {
-    motor.PID_velocity.P = 0.1;
-    motor.PID_velocity.I = 2.0;
+    motor.PID_velocity.P = 0.15;
+    motor.PID_velocity.I = 3.5;
     motor.PID_velocity.D = 0.0;
     pids_set = true;
   }	

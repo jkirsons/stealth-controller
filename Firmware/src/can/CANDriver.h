@@ -1,8 +1,6 @@
 #ifndef CANDRIVER_H
 #define CANDRIVER_H
 
-#include "driver/gpio.h"
-#include "driver/can.h"
 #include <map>
 
 #include "communication/Commander.h"
