@@ -42,5 +42,12 @@
         "streambuf": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp"
-    }
+    },
+    "ros.distro": "eloquent",
+    "python.autoComplete.extraPaths": [
+        "/opt/ros/eloquent/lib/python3.6/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/opt/ros/eloquent/lib/python3.6/site-packages"
+    ]
 }

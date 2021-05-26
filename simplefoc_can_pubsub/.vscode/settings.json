@@ -1,0 +1,12 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/opt/ros/eloquent/lib/python3.6/site-packages"
+    ],
+    "C_Cpp.errorSquiggles": "Enabled",
+    "ros.distro": "eloquent",
+    "python.analysis.extraPaths": [
+        "/home/jason/ros2_foxy/install/**",
+        "/home/jason/ros2_foxy/install/**",
+        "/opt/ros/foxy/lib/python3.8/site-packages"
+    ]
+}

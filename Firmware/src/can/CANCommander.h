@@ -2,14 +2,15 @@
 #define CANCOMMANDER_H
 
 #include "communication/Commander.h"
-#include "CANStream.h"
+#include "CANDriver.h"
 
 class CANCommander : public Commander
 {
   public:
 
-    CANCommander(CANStream &can, char eol = '\n', bool echo = false);
-    CANStream* can_stream = nullptr;  
+    CANCommander(CANDriver &can, char eol = '\n', bool echo = false);
+    void runWithCAN();
+    CANDriver* can_driver = nullptr;  
     
   private:
     void print(const float number) override;

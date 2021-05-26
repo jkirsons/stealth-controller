@@ -10,8 +10,7 @@
 class CANDriver
 {
   public:
-    CANDriver();
-    void init(int tx, int rx, Commander command);
+    CANDriver(int tx, int rx);
     void transmit();
     void receive();
     int32_t bytesToInt(uint8_t * bytes);
@@ -21,11 +20,18 @@ class CANDriver
     uint8_t const * const doubleToBytes(double *d);
     uint8_t const * const intToBytes(int32_t *i); 
     uint8_t getBits(uint32_t value, uint8_t index);
-    
+    void adminTasks();
+
     CANStream stream;
     Commander command;
     uint32_t identifier;
     
+    uint16_t nodeId = 0;
+    uint8_t uniqueId[6];
+    uint8_t versionId[2] = {0, 1};
+    uint16_t busIdRequestInterval = 3000;
+
+    unsigned long lastAdminTime = 0;
   private:
 };
 

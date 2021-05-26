@@ -28,7 +28,6 @@
 SPIClass * drv_spi = NULL;
 SPIClass * enc_spi = NULL;
 
-
 // magnetic sensor instance - SPI
 MagneticSensorSPIConfig_s MA702_SPI = {
   .spi_mode = SPI_MODE0,
@@ -45,8 +44,8 @@ MagneticSensorSPI sensor = MagneticSensorSPI(MA702_SPI, ENC_SS );
 BLDCMotor motor = BLDCMotor(11);
 DRV8316Driver6PWM driver = DRV8316Driver6PWM(12,14,27,26,33,32,5,false/*,8,39*/);
 
-CANDriver can;
-CANCommander command = CANCommander(can.stream);
+CANDriver can = CANDriver(CAN_TX, CAN_RX);
+CANCommander command = CANCommander(can);
 void doCommander(char* cmd) { command.motor(&motor, cmd); }
 
 unsigned long pidDelay = 0;
@@ -132,7 +131,6 @@ void setup() {
 	delay(1);
 	Serial.println("Initializing...");
 
-	can.init(CAN_TX, CAN_RX, command);
 	command.add('M', doCommander, (char*)"motor");
 	motor.useMonitoring(Serial);
 
@@ -157,8 +155,8 @@ void setup() {
 	delayMicroseconds(1);
 	driver.setBuckVoltage(DRV8316_BuckVoltage::VB_5V);
 	delayMicroseconds(1);
-	//driver.setPWMMode(DRV8316_PWMMode::PWM6_CurrentLimit_Mode);
 	Serial.println("Buck Voltage Set...");
+	//driver.setPWMMode(DRV8316_PWMMode::PWM6_CurrentLimit_Mode);
 
 	drv_spi = new SPIClass(VSPI);
 	drv_spi->begin(ENC_SCLK, ENC_MISO, ENC_MOSI, ENC_SS);
@@ -174,8 +172,8 @@ void setup() {
 	motor.voltage_limit = 1.0;
 	motor.voltage_sensor_align = 1.2;	
 	motor.velocity_limit = 50;
-	motor.LPF_velocity.Tf = 0.001;	
-	motor.PID_velocity.output_ramp = 500;
+	motor.LPF_velocity.Tf = 0.01;	
+	motor.PID_velocity.output_ramp = 300;
 	
 	// velocity PI controller parameters
 	motor.PID_velocity.P = 0.0;
@@ -204,10 +202,9 @@ void loop() {
 	motor.move();
 	motor.monitor();
 
-	can.receive();
-	command.run();
-	can.transmit();
-
+	command.runWithCAN();
+	
+	// loop frequency counter
 	count++;
 	if(count > 100000)
 	{
@@ -220,11 +217,11 @@ void loop() {
 		count = 0;
 	}
 
-  // Smooth start the PIDs
-  if(!pids_set && (millis() > pidDelay)) {
-    motor.PID_velocity.P = 0.15;
-    motor.PID_velocity.I = 3.5;
-    motor.PID_velocity.D = 0.0;
-    pids_set = true;
-  }	
+	// Smooth start the PIDs
+	if(!pids_set && (millis() > pidDelay)) {
+		motor.PID_velocity.P = 0.08;
+		motor.PID_velocity.I = 2.0;
+		motor.PID_velocity.D = 0.0;
+		pids_set = true;
+	}	
 }

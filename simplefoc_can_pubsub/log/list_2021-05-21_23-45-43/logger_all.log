@@ -1,0 +1,19 @@
+[1.662s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'list', '-p', '--base-paths', '/home/jason/dev_ws/src/simplefoc_can_pubsub']
+[1.662s] DEBUG:colcon:Parsed command line arguments: Namespace(base_paths=['/home/jason/dev_ws/src/simplefoc_can_pubsub'], build_base='build', ignore_user_meta=False, log_base=None, log_level=None, main=<bound method ListVerb.main of <colcon_package_information.verb.list.ListVerb object at 0x7f9be095c0>>, metas=['./colcon.meta'], names_only=False, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_end=None, packages_ignore=None, packages_ignore_regex=None, packages_select=None, packages_select_build_failed=False, packages_select_by_dep=None, packages_select_regex=None, packages_select_test_failures=False, packages_skip=None, packages_skip_build_finished=False, packages_skip_by_dep=None, packages_skip_regex=None, packages_skip_test_passed=False, packages_skip_up_to=None, packages_start=None, packages_up_to=None, packages_up_to_regex=None, paths=None, paths_only=True, topological_graph=False, topological_graph_density=False, topological_graph_dot=False, topological_graph_dot_cluster=False, topological_graph_dot_include_skipped=False, topological_graph_legend=False, topological_order=False, verb_extension=<colcon_package_information.verb.list.ListVerb object at 0x7f9be095c0>, verb_name='list', verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7f9be16470>)
+[1.777s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[1.777s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[1.778s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[1.778s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[1.778s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[1.780s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/jason/dev_ws/src/simplefoc_can_pubsub'
+[1.780s] Level 1:colcon.colcon_core.package_identification:_identify(/home/jason/dev_ws/src/simplefoc_can_pubsub) by extensions ['ignore', 'ignore_ament_install']
+[1.781s] Level 1:colcon.colcon_core.package_identification:_identify(/home/jason/dev_ws/src/simplefoc_can_pubsub) by extension 'ignore'
+[1.781s] Level 1:colcon.colcon_core.package_identification:_identify(/home/jason/dev_ws/src/simplefoc_can_pubsub) by extension 'ignore_ament_install'
+[1.782s] Level 1:colcon.colcon_core.package_identification:_identify(/home/jason/dev_ws/src/simplefoc_can_pubsub) by extensions ['colcon_pkg']
+[1.782s] Level 1:colcon.colcon_core.package_identification:_identify(/home/jason/dev_ws/src/simplefoc_can_pubsub) by extension 'colcon_pkg'
+[1.782s] Level 1:colcon.colcon_core.package_identification:_identify(/home/jason/dev_ws/src/simplefoc_can_pubsub) by extensions ['colcon_meta']
+[1.782s] Level 1:colcon.colcon_core.package_identification:_identify(/home/jason/dev_ws/src/simplefoc_can_pubsub) by extension 'colcon_meta'
+[1.783s] Level 1:colcon.colcon_core.package_identification:_identify(/home/jason/dev_ws/src/simplefoc_can_pubsub) by extensions ['ros']
+[1.783s] Level 1:colcon.colcon_core.package_identification:_identify(/home/jason/dev_ws/src/simplefoc_can_pubsub) by extension 'ros'
+[1.861s] DEBUG:colcon.colcon_core.package_identification:Package '/home/jason/dev_ws/src/simplefoc_can_pubsub' with type 'ros.ament_python' and name 'simplefoc_can_pubsub'
+[1.862s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
