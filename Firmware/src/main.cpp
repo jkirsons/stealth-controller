@@ -18,7 +18,7 @@ MagneticSensorSPIConfig_s MA702_SPI = {
 MagneticSensorSPI sensor = MagneticSensorSPI(MA702_SPI, ENC_SS);
 
 BLDCMotor motor = BLDCMotor(7);
-DRV8316Driver6PWM driver = DRV8316Driver6PWM(12,14,27,26,33,32,5,false/*,8,39*/);
+DRV8316Driver6PWM driver = DRV8316Driver6PWM(DRV_A_H, DRV_A_L, DRV_B_H, DRV_B_L, DRV_C_H, DRV_C_L, DRV_SS, false/*, DRV_OFF, DRV_FAULT*/);
 
 StealthController stealth = StealthController(driver);
 

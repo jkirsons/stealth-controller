@@ -15,6 +15,13 @@
 #define DRV_OFF		8
 #define DRV_FAULT	39
 
+#define DRV_A_H 12
+#define DRV_A_L 14
+#define DRV_B_H 27
+#define DRV_B_L 26
+#define DRV_C_H 33
+#define DRV_C_L 32
+
 // MA702
 #define ENC_MISO   15
 #define ENC_MOSI   20
@@ -24,6 +31,7 @@
 // CAN
 #define CAN_TX		7
 #define CAN_RX 		34
+
 
 class StealthController
 {
