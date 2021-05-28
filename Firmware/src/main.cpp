@@ -62,12 +62,12 @@ void setup() {
 	Serial.println("Driver Init complete...");
 
 	motor.controller = MotionControlType::angle;
-	motor.foc_modulation = FOCModulationType::SinePWM;
+	motor.foc_modulation = FOCModulationType::SpaceVectorPWM;
 	//motor.motion_downsample = 10;
 	motor.voltage_limit = 4.0;
 	motor.voltage_sensor_align = 4.0;	
-	motor.velocity_limit = 50;
-	motor.LPF_velocity.Tf = 0.02;	
+	motor.velocity_limit = 100;
+	motor.LPF_velocity.Tf = 0.03;	
 	motor.PID_velocity.output_ramp = 500;
 	
 	// velocity PI controller parameters
@@ -95,5 +95,5 @@ void loop() {
 	canCommand.runWithCAN();
 	command.run();
 	
-	stealth.loopStep(motor, 0.15, 2.0, 0.0, true);
+	stealth.loopStep(motor, 0.09, 2.0, 0.0, true);
 }
