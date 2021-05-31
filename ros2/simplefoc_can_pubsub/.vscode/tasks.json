@@ -7,24 +7,21 @@
       "label": "build",
       "detail": "Build workspace (default)",
       "type": "shell",
-      "command": "cd ~/dev_ws;. install/setup.zsh;colcon build --packages-select ${input:package}",
-      "problemMatcher": [],
-      "presentation": {
-        "clear": true
-      }
+      "command": "cd ~/dev_ws;. install/setup.bash;colcon build --packages-select ${input:package}",
+      "problemMatcher": []
     },
     {
       "label": "run talker",
       "detail": "Run ROS2",
       "type": "shell",
-      "command": "cd ~/dev_ws;. install/setup.zsh;ros2 run ${input:package} talker",
+      "command": "cd ~/dev_ws;. install/setup.bash;ros2 run ${input:package} talker",
       "problemMatcher": []
     },
     {
       "label": "run listener",
       "detail": "Run ROS2",
       "type": "shell",
-      "command": "cd ~/dev_ws;. install/setup.zsh;ros2 run ${input:package} listener",
+      "command": "cd ~/dev_ws;. install/setup.bash;ros2 run ${input:package} listener",
       "problemMatcher": []
     },
   ],

@@ -4,7 +4,7 @@ from std_msgs.msg import String
 from rcl_interfaces.msg import ParameterDescriptor
 from geometry_msgs.msg import Twist
 
-import can
+# import can
 # https://python-can.readthedocs.io/en/master/listeners.html
 import math
 
