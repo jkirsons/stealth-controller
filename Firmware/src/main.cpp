@@ -29,11 +29,20 @@ Commander command = Commander(Serial);
 
 void doCommander(char* cmd) { command.motor(&motor, cmd); }
 void doCommanderCAN(char* cmd) { canCommand.motor(&motor, cmd); }
-
 void doCustom(char* cmd) { 
+	printf("Custom Command: %s\n", cmd);
 	switch(cmd[0]) {
 		case 'S':
 			driver.setSlew((DRV8316_Slew)atoi(&cmd[1])); 
+			break;
+		case 'A':
+			driver.setActiveSynchronousRectificationEnabled(atoi(&cmd[1]) != 0);
+			break;
+		case 'B':
+			driver.setActiveAsynchronousRectificationEnabled(atoi(&cmd[1]) != 0);
+			break;	
+		case 'C':
+			setCpuFrequencyMhz(atoi(&cmd[1]));
 			break;
 	}
 }
