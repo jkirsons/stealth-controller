@@ -1,0 +1,50 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Linux: build",
+      "detail": "Build workspace (default)",
+      "type": "shell",
+      "command": "cd ~/dev_ws;. install/setup.bash;colcon build --symlink-install --packages-select simplefoc_can_pubsub",
+      "problemMatcher": []
+    },
+    {
+      "label": "Linux: run",
+      "detail": "Run ROS2",
+      "type": "shell",
+      "command": "cd ~/dev_ws;. install/setup.bash;ros2 run simplefoc_can_pubsub ${input:function}",
+      "problemMatcher": []
+    },
+    {
+      "label": "Windows: build",
+      "detail": "Run ROS2",
+      "type": "shell",
+      "command": "cd c:\\dev\\dev_ws;call install\\setup.bat;colcon build --merge-instal --symlink-install --packages-select simplefoc_can_pubsub",
+      "problemMatcher": []
+    },
+    {
+      "label": "Windows: run",
+      "detail": "Run ROS2",
+      "type": "shell",
+      "command": "cd c:\\dev\\dev_ws;set RMW_IMPLEMENTATION=rmw_fastrtps_cpp;set ROS_DISCOVERY_SERVER=192.168.1.26:11811;call install\\setup.bat;ros2 run simplefoc_can_pubsub ${input:function}",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+      {
+        "id": "package",
+        "type": "promptString",
+        "description": "Package name",
+        "default": "simplefoc_can_pubsub"
+      },
+      {
+        "id": "function",
+        "type": "pickString",
+        "description": "Function name",
+        "options": [ "listener", "talker", "server", "client" ],
+        "default": "listener"
+      }
+    ]
+}

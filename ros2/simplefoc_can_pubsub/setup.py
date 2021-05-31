@@ -22,7 +22,7 @@ setup(
             'console_scripts': [
                     'talker = simplefoc_can_pubsub.publisher_member_function:main',
                     'listener = simplefoc_can_pubsub.subscriber_member_function:main',
-                    'service = simplefoc_can_pubsub.service_member_function:main',
+                    'server = simplefoc_can_pubsub.server_member_function:main',
                     'client = simplefoc_can_pubsub.client_member_function:main',
             ],
     },
