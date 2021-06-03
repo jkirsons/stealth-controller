@@ -1,0 +1,5 @@
+int8 command
+int8 motor_id
+int16 bus_id
+float32 value
+---

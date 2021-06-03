@@ -7,7 +7,7 @@
       "label": "Linux: build",
       "detail": "Build workspace (default)",
       "type": "shell",
-      "command": "cd ~/dev_ws;. install/setup.bash;colcon build --symlink-install --packages-select simplefoc_can_pubsub",
+      "command": "cd ~/dev_ws;. install/setup.bash;colcon build --symlink-install",
       "problemMatcher": []
     },
     {

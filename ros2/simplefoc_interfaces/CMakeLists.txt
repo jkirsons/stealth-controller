@@ -27,6 +27,8 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Value.msg"
   "srv/GetValue.srv"
+  "srv/SetFloat.srv"
+  "srv/SetDouble.srv"  
  )
 
 ament_package()
