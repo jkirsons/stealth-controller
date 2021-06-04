@@ -32,7 +32,7 @@ class MinimalService(Node):
 
   def service_callback_setDouble(self, request, response):
     ba = bytearray(struct.pack("d", request.value)) 
-    self.handler.send_can_message(CanHandler.data_type["double"], request.command, request.motor_id, request.bus_id, ba)
+    self.handler.send_can_message(CanHandler.data_types["double"], request.command, request.motor_id, request.bus_id, ba)
     return response
 
 def main():

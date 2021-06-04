@@ -4,6 +4,13 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Linux: candump",
+      "detail": "candump",
+      "type": "shell",
+      "command": "candump",
+      "problemMatcher": []
+    },
+    {
       "label": "Linux: build",
       "detail": "Build workspace (default)",
       "type": "shell",
