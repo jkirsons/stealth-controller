@@ -1,6 +1,6 @@
 import sys
 
-from example_interfaces.srv import AddTwoInts
+from simplefoc_interfaces.srv import SetFloat
 import rclpy
 from rclpy.node import Node
 
@@ -9,14 +9,14 @@ class MinimalClientAsync(Node):
 
     def __init__(self):
         super().__init__('minimal_client_async')
-        self.cli = self.create_client(AddTwoInts, 'add_two_ints')
+        self.cli = self.create_client(SetFloat, 'set_float')
         while not self.cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
-        self.req = AddTwoInts.Request()
+        self.req = SetFloat.Request()
 
     def send_request(self):
-        self.req.a = int(sys.argv[1])
-        self.req.b = int(sys.argv[2])
+        #self.req.a = int(sys.argv[1])
+        #self.req.b = int(sys.argv[2])
         self.future = self.cli.call_async(self.req)
 
 
@@ -35,9 +35,10 @@ def main():
                 minimal_client.get_logger().info(
                     'Service call failed %r' % (e,))
             else:
-                minimal_client.get_logger().info(
-                    'Result of add_two_ints: for %d + %d = %d' %
-                    (minimal_client.req.a, minimal_client.req.b, response.sum))
+                #minimal_client.get_logger().info(
+                #    'Result of add_two_ints: for %d + %d = %d' %
+                #    (minimal_client.req.a, minimal_client.req.b, response.sum))
+                pass
             break
 
     minimal_client.destroy_node()

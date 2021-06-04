@@ -7,14 +7,28 @@
       "label": "Linux: build",
       "detail": "Build workspace (default)",
       "type": "shell",
-      "command": "cd ~/dev_ws;. install/setup.bash;colcon build --symlink-install",
+      "command": ". linux_env.sh;colcon build --symlink-install",
       "problemMatcher": []
     },
     {
       "label": "Linux: run",
       "detail": "Run ROS2",
       "type": "shell",
-      "command": "cd ~/dev_ws;. install/setup.bash;ros2 run simplefoc_can_pubsub ${input:function}",
+      "command": ". linux_env.sh;ros2 run simplefoc_can_pubsub ${input:node}",
+      "problemMatcher": []
+    },
+    {
+      "label": "Linux: run 2",
+      "detail": "Run ROS2",
+      "type": "shell",
+      "command": ". linux_env.sh;ros2 run simplefoc_can_pubsub ${input:node}",
+      "problemMatcher": []
+    },    
+    {
+      "label": "Linux: run discovery server",
+      "detail": "run discovery server",
+      "type": "shell",
+      "command": ". linux_env.sh;fastdds discovery --server-id 0",
       "problemMatcher": []
     },
     {
@@ -28,7 +42,7 @@
       "label": "Windows: run",
       "detail": "Run ROS2",
       "type": "shell",
-      "command": "cd c:\\dev\\dev_ws & set RMW_IMPLEMENTATION=rmw_fastrtps_cpp & set ROS_DISCOVERY_SERVER=192.168.1.26:11811 & call install\\setup.bat & ros2 run simplefoc_can_pubsub ${input:function}",
+      "command": "cd c:\\dev\\dev_ws & set RMW_IMPLEMENTATION=rmw_fastrtps_cpp & set ROS_DISCOVERY_SERVER=192.168.1.26:11811 & call install\\setup.bat & ros2 run simplefoc_can_pubsub ${input:node}",
       "problemMatcher": []
     }
   ],
@@ -40,7 +54,7 @@
         "default": "simplefoc_can_pubsub"
       },
       {
-        "id": "function",
+        "id": "node",
         "type": "pickString",
         "description": "Function name",
         "options": [ "listener", "talker", "server", "client" ],

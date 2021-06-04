@@ -7,6 +7,7 @@ from rclpy.node import Node
 
 from .can_handler import CanHandler
 import can # https://python-can.readthedocs.io
+import struct
 
 class MinimalService(Node):
 
@@ -26,12 +27,12 @@ class MinimalService(Node):
   # https://docs.python.org/3/library/struct.html#format-characters
   def service_callback_setFloat(self, request, response):
     ba = bytearray(struct.pack("f", request.value)) 
-    self.handler.send_can_message(self.handler.data_type["float"], request.command, request.motor_id, request.bus_id, data)
+    self.handler.send_can_message(CanHandler.data_types["float"], request.command, request.motor_id, request.bus_id, ba)
     return response
 
   def service_callback_setDouble(self, request, response):
     ba = bytearray(struct.pack("d", request.value)) 
-    self.handler.send_can_message(self.handler.data_type["double"], request.command, request.motor_id, request.bus_id, data)
+    self.handler.send_can_message(CanHandler.data_type["double"], request.command, request.motor_id, request.bus_id, ba)
     return response
 
 def main():
