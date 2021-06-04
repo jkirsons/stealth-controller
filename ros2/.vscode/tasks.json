@@ -35,14 +35,14 @@
       "label": "Windows: build",
       "detail": "Run ROS2",
       "type": "shell",
-      "command": "cd c:\\dev\\dev_ws & call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x86_amd64 & call c:\\dev\\ros2-galactic\\setup.bat & Set-ExecutionPolicy Unrestricted & colcon build --merge-install",
+      "command": "call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x86_amd64 & call windows_env.bat & colcon build --merge-install",
       "problemMatcher": []
     },
     {
       "label": "Windows: run",
       "detail": "Run ROS2",
       "type": "shell",
-      "command": "cd c:\\dev\\dev_ws & set RMW_IMPLEMENTATION=rmw_fastrtps_cpp & set ROS_DISCOVERY_SERVER=192.168.1.26:11811 & call install\\setup.bat & ros2 run simplefoc_can_pubsub ${input:node}",
+      "command": "call windows_env.bat & ros2 run simplefoc_can_pubsub ${input:node}",
       "problemMatcher": []
     }
   ],
