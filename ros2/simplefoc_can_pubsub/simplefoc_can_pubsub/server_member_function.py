@@ -17,7 +17,7 @@ class MinimalService(Node):
     self.srvFloat = self.create_service(SetFloat, 'set_float', self.service_callback_setFloat)
     self.srvDouble = self.create_service(SetDouble, 'set_double', self.service_callback_setDouble)
 
-    self.bus = can.interface.Bus(bustype='socketcan', channel='can0', bitrate=1000000)
+    self.bus = can.interface.Bus(bustype='socketcan', channel='can1', bitrate=1000000)
     self.handler = CanHandler(self.bus)
     notifier = can.Notifier(self.bus, [ self.canReceived ])
 

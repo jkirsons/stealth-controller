@@ -19,20 +19,30 @@ class CanHandler:
     def __init__(self, bus):
         self.can_bus = bus
 
+    def getBits(self, value, index):
+        return (value >> CanHandler.bitShift[index]) & CanHandler.bitMask[index]
+
+    def unpackId(self, value):
+        return (self.getBits(value, 0), self.getBits(value, 1), self.getBits(value, 2), self.getBits(value, 3))
+
     def process(self, msg):
-        if bytes(msg.data) in self.bus_node_ids:
-            self.send_can_message(self.data_types["Bus Id"], self.commands["CMD_CUST_BUS_ID"], 
-                0, self.bus_node_ids[bytes(msg.data)], msg.data)
-        else:
-            taken_nodes = self.bus_node_ids.values()
-            for i in range(1, 4096):
-                if i not in taken_nodes:
-                    self.bus_node_ids[bytes(msg.data)] = i
-                    print("Allocating Bus ID: ", i, " to: ",bytes(msg.data).hex())
-                    # send return message
-                    self.send_can_message(self.data_types["Bus Id"], self.commands["CMD_CUST_BUS_ID"], 0, i, msg.data)
-                    return
-            print("No remaining Bus IDs to allocate")
+        (dataType, command, motorID, busID) = self.unpackId(msg.arbitration_id)
+        
+        # Requests for Bus ID
+        if busID == 0:
+            if bytes(msg.data) in self.bus_node_ids:
+                self.send_can_message(self.data_types["Bus Id"], self.commands["CMD_CUST_BUS_ID"], 
+                    0, self.bus_node_ids[bytes(msg.data)], msg.data)
+            else:
+                taken_nodes = self.bus_node_ids.values()
+                for i in range(1, 4096):
+                    if i not in taken_nodes:
+                        self.bus_node_ids[bytes(msg.data)] = i
+                        print("Allocating Bus ID: ", i, " to: ",bytes(msg.data).hex())
+                        # send return message
+                        self.send_can_message(self.data_types["Bus Id"], self.commands["CMD_CUST_BUS_ID"], 0, i, msg.data)
+                        return
+                print("No remaining Bus IDs to allocate")
 
     def send_can_message(self, data_type, command, motor_id, bus_node_id, data):
         id =  data_type << self.bitShift[0] | command << self.bitShift[1] | motor_id << self.bitShift[2] | bus_node_id << self.bitShift[3]
